@@ -29,6 +29,14 @@ class ChatWM extends WidgetModel<ChatScreen, ChatModel> implements IChatWM {
   ChatWM(ChatModel model) : super(model);
 
   @override
+  void sendMessage() {
+    if (_hubConnection != null) {
+      _hubConnection!
+          .invoke("SendMessage", args: <Object>['username', 'customMessage']);
+    }
+  }
+
+  @override
   void initWidgetModel() {
     super.initWidgetModel();
 
@@ -66,7 +74,9 @@ class ChatWM extends WidgetModel<ChatScreen, ChatModel> implements IChatWM {
   }
 }
 
-abstract class IChatWM {}
+abstract class IChatWM {
+  void sendMessage();
+}
 
 class HttpOverrideCertificateVerificationInDev extends HttpOverrides {
   @override

@@ -1,5 +1,5 @@
 import 'package:elementary/elementary.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:signalr_test_chat/features/chat/chat_wm.dart';
 
 class ChatScreen extends ElementaryWidget<ChatWM> {
@@ -10,6 +10,8 @@ class ChatScreen extends ElementaryWidget<ChatWM> {
         );
   @override
   Widget build(IChatWM wm) {
-    return Container();
+    return Scaffold(
+      floatingActionButton: FloatingActionButton(onPressed: wm.sendMessage),
+    );
   }
 }
