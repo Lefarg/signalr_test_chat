@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:signalr_test_chat/features/chat/chat_screen.dart';
+import 'package:signalr_test_chat/features/chat/ui/screen/chat_screen.dart';
 
 void main() {
   HttpOverrides.global = HttpOverrideCertificateVerificationInDev();
