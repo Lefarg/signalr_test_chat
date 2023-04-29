@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import 'package:signalr_netcore/signalr_client.dart';
 import 'package:signalr_test_chat/features/chat/domain/model/chat_message_model.dart';
+import 'package:signalr_test_chat/features/chat/utils/chat_entity_type.dart';
 
 const _serverUrl = 'https://localhost:7222/chatHub';
 
@@ -13,8 +14,7 @@ class ChatModel extends ElementaryModel {
   final _chatMessagesListState = EntityStateNotifier<List<ChatMessageModel>>();
   final _chatMessagesList = <ChatMessageModel>[];
 
-  EntityStateNotifier<List<ChatMessageModel>> get chatMessagesListState =>
-      _chatMessagesListState;
+  EntityStateNotifier<List<ChatMessageModel>> get chatMessagesListState => _chatMessagesListState;
 
   ChatModel();
 
@@ -46,13 +46,10 @@ class ChatModel extends ElementaryModel {
       _hubConnection!.on("SendMessageToClient", _handleIncomingChatMessage);
     }
 
-    if (_hubConnection?.state != HubConnectionState.Connected &&
-        _hubConnection != null) {
+    if (_hubConnection?.state != HubConnectionState.Connected && _hubConnection != null) {
       _startHubConnection(_hubConnection!)
-          .then((_) =>
-              debugPrint('--> connection status: ${_hubConnection!.state}'))
-          .onError((error, stackTrace) =>
-              debugPrint('--> connection error: $error'));
+          .then((_) => debugPrint('--> connection status: ${_hubConnection!.state}'))
+          .onError((error, stackTrace) => debugPrint('--> connection error: $error'));
     }
   }
 
@@ -66,10 +63,12 @@ class ChatModel extends ElementaryModel {
   void onSendClick(String message) {
     if (_hubConnection != null) {
       // Вызываем метод на стороне сервера, первый аргумент - название этого метода.
-      _hubConnection!
-          .invoke("SendMessage", args: <Object>['Peter Tagtgren', message]);
-      _chatMessagesList.add(
-          ChatMessageModel(senderUsername: 'Peter Tagtgren', message: message));
+      _hubConnection!.invoke("SendMessage", args: <Object>['Peter Tagtgren', message]);
+      _chatMessagesList.add(ChatMessageModel(
+        senderUsername: 'Peter Tagtgren',
+        message: message,
+        chatEntityType: ChatEntityType.outcomingMessage,
+      ));
     }
   }
 
@@ -81,8 +80,11 @@ class ChatModel extends ElementaryModel {
     if (args != null) {
       final senderName = args.first.toString();
       final message = args.last.toString();
-      _chatMessagesList
-          .add(ChatMessageModel(senderUsername: senderName, message: message));
+      _chatMessagesList.add(ChatMessageModel(
+        senderUsername: senderName,
+        message: message,
+        chatEntityType: ChatEntityType.incomingMessage,
+      ));
       _chatMessagesListState.content(_chatMessagesList);
     }
   }
