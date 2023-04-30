@@ -2,8 +2,9 @@ import 'package:elementary/elementary.dart';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import 'package:signalr_netcore/signalr_client.dart';
-import 'package:signalr_test_chat/features/chat/domain/model/chat_message_model.dart';
-import 'package:signalr_test_chat/features/chat/utils/chat_entity_type.dart';
+import 'package:signalr_test_chat/features/chat/domain/models/common_chat_message.dart';
+import 'package:signalr_test_chat/features/chat/domain/models/incoming_chat_message.dart';
+import 'package:signalr_test_chat/features/chat/domain/models/outcoming_chat_message.dart';
 
 const _serverUrl = 'https://localhost:7222/chatHub';
 
@@ -11,10 +12,10 @@ class ChatModel extends ElementaryModel {
   HubConnection? _hubConnection;
   Logger? _logger;
 
-  final _chatMessagesListState = EntityStateNotifier<List<ChatMessageModel>>();
-  final _chatMessagesList = <ChatMessageModel>[];
+  final _chatMessagesListState = EntityStateNotifier<List<CommonChatMessage>>();
+  final _chatMessagesList = <CommonChatMessage>[];
 
-  EntityStateNotifier<List<ChatMessageModel>> get chatMessagesListState => _chatMessagesListState;
+  EntityStateNotifier<List<CommonChatMessage>> get chatMessagesListState => _chatMessagesListState;
 
   ChatModel();
 
@@ -64,10 +65,9 @@ class ChatModel extends ElementaryModel {
     if (_hubConnection != null) {
       // Вызываем метод на стороне сервера, первый аргумент - название этого метода.
       _hubConnection!.invoke("SendMessage", args: <Object>['Peter Tagtgren', message]);
-      _chatMessagesList.add(ChatMessageModel(
-        senderUsername: 'Peter Tagtgren',
+      _chatMessagesList.add(OutcomingChatMessage(
+        name: 'Peter Tagtgren',
         message: message,
-        chatEntityType: ChatEntityType.outcomingMessage,
       ));
     }
   }
@@ -80,10 +80,9 @@ class ChatModel extends ElementaryModel {
     if (args != null) {
       final senderName = args.first.toString();
       final message = args.last.toString();
-      _chatMessagesList.add(ChatMessageModel(
-        senderUsername: senderName,
+      _chatMessagesList.add(IncomingChatMessage(
+        name: senderName,
         message: message,
-        chatEntityType: ChatEntityType.incomingMessage,
       ));
       _chatMessagesListState.content(_chatMessagesList);
     }

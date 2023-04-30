@@ -3,7 +3,7 @@
 import 'package:elementary/elementary.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:signalr_test_chat/features/chat/domain/model/chat_message_model.dart';
+import 'package:signalr_test_chat/features/chat/domain/models/common_chat_message.dart';
 import 'package:signalr_test_chat/features/chat/ui/screen/chat_model.dart';
 import 'package:signalr_test_chat/features/chat/ui/screen/chat_screen.dart';
 
@@ -28,7 +28,7 @@ class ChatWM extends WidgetModel<ChatScreen, ChatModel> implements IChatWM {
   TextEditingController get textEditingController => _textEditingController;
 
   @override
-  EntityStateNotifier<List<ChatMessageModel>> get chatMessagesState => model.chatMessagesListState;
+  EntityStateNotifier<List<CommonChatMessage>> get chatMessagesState => model.chatMessagesListState;
 
   @override
   ScrollController get scrollController => _scrollController;
@@ -53,7 +53,7 @@ class ChatWM extends WidgetModel<ChatScreen, ChatModel> implements IChatWM {
         if (_scrollController.hasClients) {
           // TODO(Deyew): требуется проверка и отладка - при скролле вверх и получении сообщения почему-то скроллит не до низа последнего виджета
           _scrollController.animateTo(
-            _scrollController.position.maxScrollExtent ,
+            _scrollController.position.maxScrollExtent,
             curve: Curves.easeOut,
             duration: const Duration(milliseconds: 300),
           );
@@ -71,7 +71,7 @@ abstract class IChatWM {
   ScrollController get scrollController;
 
   /// Entity state for chat messages.
-  EntityStateNotifier<List<ChatMessageModel>> get chatMessagesState;
+  EntityStateNotifier<List<CommonChatMessage>> get chatMessagesState;
 
   /// Text controller for text field.
   TextEditingController get textEditingController;
