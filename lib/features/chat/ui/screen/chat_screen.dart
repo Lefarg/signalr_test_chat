@@ -6,6 +6,8 @@ import 'package:signalr_test_chat/features/chat/domain/models/outcoming_chat_mes
 import 'package:signalr_test_chat/features/chat/ui/screen/chat_wm.dart';
 import 'package:signalr_test_chat/features/chat/ui/widgets/chat_messaging_input_textfield.dart';
 import 'package:signalr_test_chat/features/chat/ui/widgets/group_chat_appbar.dart';
+import 'package:signalr_test_chat/features/chat/ui/widgets/incoming_chat_message_widget.dart';
+import 'package:signalr_test_chat/features/chat/ui/widgets/outcoming_chat_message_widget.dart';
 
 class ChatScreen extends ElementaryWidget<ChatWM> {
   const ChatScreen({Key? key, WidgetModelFactory wmFactory = initChatWMFactory})
@@ -23,6 +25,11 @@ class ChatScreen extends ElementaryWidget<ChatWM> {
           Expanded(
             child: EntityStateNotifierBuilder<List<CommonChatMessage>>(
               listenableEntityState: wm.chatMessagesState,
+              loadingBuilder: (_, __) =>
+                  const Center(child: RefreshProgressIndicator()),
+              errorBuilder: (_, e, __) => Center(
+                child: Text(e.toString()),
+              ),
               builder: (_, messages) => messages == null
                   ? const SizedBox.shrink()
                   : Padding(
@@ -35,45 +42,15 @@ class ChatScreen extends ElementaryWidget<ChatWM> {
                           final currentMessage = messages[index];
 
                           if (currentMessage is OutcomingChatMessage) {
-                            return Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                DecoratedBox(
-                                  decoration: BoxDecoration(
-                                    color: Colors.yellow[100],
-                                    borderRadius: BorderRadius.circular(8.0),
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text(currentMessage.message),
-                                  ),
-                                ),
-                              ],
-                            );
+                            return OutcomingChatMessageWidget(
+                                currentMessage: currentMessage);
                           }
+
                           if (currentMessage is IncomingChatMessage) {
-                            return Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Column(
-                                  children: [
-                                    DecoratedBox(
-                                      decoration: BoxDecoration(
-                                        color: Colors.grey[100],
-                                        borderRadius:
-                                            BorderRadius.circular(8.0),
-                                      ),
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Text(currentMessage.message),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            );
+                            return IncomingChatMessageWidget(
+                                currentMessage: currentMessage);
                           }
-                          return const Text('');
+                          return const SizedBox.shrink();
                         },
                       ),
                     ),

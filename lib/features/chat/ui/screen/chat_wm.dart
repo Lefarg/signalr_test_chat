@@ -28,7 +28,8 @@ class ChatWM extends WidgetModel<ChatScreen, ChatModel> implements IChatWM {
   TextEditingController get textEditingController => _textEditingController;
 
   @override
-  EntityStateNotifier<List<CommonChatMessage>> get chatMessagesState => model.chatMessagesListState;
+  EntityStateNotifier<List<CommonChatMessage>> get chatMessagesState =>
+      model.chatMessagesListState;
 
   @override
   ScrollController get scrollController => _scrollController;
@@ -39,7 +40,7 @@ class ChatWM extends WidgetModel<ChatScreen, ChatModel> implements IChatWM {
   @override
   void onSendClick(String message) {
     if (message.isEmpty) return;
-    model.onSendClick(message);
+    model.onSendMessage(message);
     _textEditingController.clear();
     _textFieldFocus.requestFocus();
   }
